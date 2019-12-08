@@ -29,7 +29,7 @@ A few examples showing **all there is to know**.
 3. `colo[u]r`: this shows optional alternative, here "color" and "colour" are the only matches.
 4. `a [very|quite|somewhat] hot summer`: this time we really have alternatives, and they can be omitted. There are 4 acceptable matches here, including "a hot summer" (which would have given no match if curly brackets had been used).
 5. `some part[ completely {optional|up to you}] that you will write yourself`: Nesting is possible.
-6. `[Yesterday |Monday ]{[s]he|it} {negligently} drove a {[Mercedes[-| ] ]Benz|Ferrari|Porsche}`: it's possible to write more cumbersome expressions, though it somehow defeats the purpose of SLRE (they are for short expressions, if you expect a match being a very long sentence you wouldn't use neither regex nor SLRE to be frank).
+6. `[Yesterday |Monday ]{[s]he|it} {negligently} drove a {[Mercedes[-| ] ]Benz|Ferrari|Porsche}`: it's possible to write more cumbersome expressions, though it somehow defeats the purpose of SLRE (they are for short expressions, if you expect a match being a very long sentence you probably won't want to use SLRE nor regex).
 
 # In the Chomsky hierarchy
 
@@ -41,11 +41,11 @@ A SLRE meets the following characteristics:
 * it's counter-free (no Kleene-star, no `+`, no `{min,max}`),
 * it's finite: this means it can contain only a finite number of words.
 
-The languages definable with SLRE are therefore described using a [DAFSA](https://en.wikipedia.org/wiki/Deterministic_acyclic_finite_state_automaton), A.K.A. a DAWG (directed acyclic word graph), which is (dramatically I can only suppose) simpler to implement than a DFA or NFA engine. 
+The languages definable with SLRE are therefore described using a [DAFSA](https://en.wikipedia.org/wiki/Deterministic_acyclic_finite_state_automaton), A.K.A. a DAWG (directed acyclic word graph), which is dramatically simpler to implement than a DFA or NFA engine. 
 
 # Maintenance bits of doc
 
-> You probably won't need this to merely use SLRE.
+> You won't need this to merely use SLRE, but I include it for maintenance purposes or if you want to directly use the parsed tree with `_parse()`.
 
 Notations: 
 
@@ -116,15 +116,16 @@ X = |      |         |      |  ⊙ f
     |                       |
 ```
 
-Between vertical bars are terms of an alternation, **vertically stacked**. There are 3 alternations here and the third one, which 2nd term is `d ⊙ e`, is a little bit hard to see. 
-
-If it's still not clear how it works, the first one is easiest, see `[j,k]` in : `h ⊙ [j,k]`.
+Between vertical bars are terms of an alternation, **vertically stacked**. 
 
 This X develops as shown before as `["ahjcf","ahkcf","alcf","def"]`.
 
 ## Parsed tree graph
 
-(with annotations preceding nodes, e.g. or `1⧇` or `2⊙` `{a{h{j|k}|l}c|de}f` is parsed as:
+(with annotations preceding nodes, e.g. or `1⧇` or `2⊙`)
+
+`{a{h{j|k}|l}c|de}f` parses as:
+
 ```
        0⊙
        / \
@@ -132,17 +133,17 @@ This X develops as shown before as `["ahjcf","ahkcf","alcf","def"]`.
      / \  |
    2⊙  3⊙ f
    /|\  |\
-  a4⧇ c d e
-   / \        From bottom, going back up:
+  a4⧇ c d e   Expansion is using recursion,
+   / \        from bottom, going back up:
  5⊙   ⊙
  / \  |       6⧇ is ["j"] ⊙ ["k"] is ["j", "k"] 
  h6⧇  i       5⊙ is [["h"], ["j", "k"]]
   / \            is ["h j", "h k"] 
  ⊙   ⊙        4⧇ is 5⊙: ["h j", "hk"] ⊙ ["l"]
  |   |           is ["h j", "h k", "l"]  Beware here!! 
-              3⊙ is ["d e"]
  j   k        2⊙ is [["a"], ["h j", "h k", "l"], ["c"]]
                  is ["ahjc","ahkc","alc"]
+              3⊙ is ["d e"]
               1⧇ is 1⊙ ⧇ 2⊙
                  is 1⊙: ["ahjc","ahkc","alc"]
                     2⊙: ["de"]
