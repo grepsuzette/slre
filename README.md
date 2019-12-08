@@ -101,16 +101,12 @@ To help visualizing the _expand() algorithm, and justify the need of `Seq` and `
 ```
     |                       |
     |      |         |      |         
-    |      |         |      |         
     |      | h ⊙ |j| |      |
     |      |     |k| |      |
     |  a ⊙ |         | ⊙ c  |           
-    |      |         |      |
 X = |      |         |      |  ⊙ f
     |      |    l    |      |
     |      |         |      |
-    |      |         |      |
-    |                       |
     |                       |
     |     d     ⊙    e      |
     |                       |
