@@ -1,0 +1,13 @@
+{
+  "name": "slre",
+  "url": "https://github.com/emugel/slre",
+  "license": "mit",
+  "tags": ["regular expression", "regular expressions", "regex", "linguistic", "human", "expression"],
+  "description": "Kleene-star-less, unrecursive, simple & safe regular expressions especially for non-regex savvy users. SLRE are such as `{We are|I am} [very|quite] glad to {write|offer} {simple [regular ]expressions|SLRE}[ at last].`",
+  "version": "0.0.1",
+  "releasenote": "initial release (gamma)",
+  "contributors": ["emugel"],
+  "dependencies": { 
+  },
+  "classPath": "src"
+}
