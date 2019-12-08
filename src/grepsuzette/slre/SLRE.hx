@@ -279,6 +279,8 @@ class SLRE {
     //     ;
 
     /**
+     * A n-ary pseudo-cartesian-product (pseudo because 
+     * when one set is empty we return the other one instead of ⊘).
      * [["a b c"], ["d"], ["e f"]] 
      * -> [ ["a d e"], ["a d f"], ["b d e"], ["b d f"], ["c d e"], ["c d f"] ]
      * @sa cartesianproduct().
@@ -306,7 +308,7 @@ class SLRE {
     */
 
     /**
-     * A cartesianish product, that we define as ⊙ operator in our doc.
+     * A pseudo-cartesian product, that we define as ⊙ operator in our doc.
      * ["a b", "c"] ⊙ ["d"] -> ["a bd", "cd"].
      * And contrarily to a real cartesian product, [] ⊙ x -> x.
      * @sa cartesianproduct_chained().
@@ -331,54 +333,4 @@ enum Node {
 
 enum NodeSeq { Seq(a:Array<Node>); }
 
-
-/* {{{2 
- 
-DOC 
-To work with the parsed tree (as used by SLRE._expand()).
-
-   - ⧇ is an Alt node (note: an Opt is an Alt(["", ...]))
-                      it is notated like this because it builds arrays (`[]`)
-                      which are then developed by the ⊙ operator. 
-   - ⊙ is a Seq.      Some sort of cartesianproduct coupled with a 
-                      concatenation operation.
-
-Here is a work example of a parsed tree which _expand() would utilize:
-
-        ⊙
-       / \
-     ∎⧇   ⊙
-     / \  |
-   1⊙  2⊙ f
-   /|\  |\
-  a3⧇ c d e
-   / \        From bottom, going back up:
- 5⊙   ⊙
- / \  |       4⧇ is ["j"] ⊙ ["k"] is ["j", "k"] 
- h4⧇  i       5⊙ is [["h"], ["j", "k"]]
-  / \            is ["h j", "h k"] 
- ⊙   ⊙        3⧇ is 5⊙: ["h j", "hk"] ⊙ ["l"]
- |   |           is ["h j", "h k", "l"] !! 
- j   k        1⊙ is [["a"], ["h j", "h k", "l"], ["c"]]
-                 is ["ahjc","ahkc","alc"]
-              2⊙ is ["d e"]
-              ∎⧇ is 1⊙ ⧇ 2⊙
-                 is 1⊙: ["ahjc","ahkc","alc"]
-                    2⊙: ["de"]
-                 is ["ahjc","ahkc","alc", "de"]
-           root⊙ is [["ahjc","ahkc","alc", "de"], ["f"]]
-                 is ["ahjcf","ahkcf","alcf","def"].
-
-After putting this together 
-we start to see the dance 
-between ⊙ and ⧇ (Seq and Alt).
-⧇ folds all (reduced) branches to 
-  a mere Array<String>.
-  (note ⊙ DOES the String concat, NOT ⧇ ),
-⊙ has an internal work var of Array<Array<String>>,
-  which then gets developed (using String concat 
-  variant of a cartesian product).
-  and returns Array<String>.
-
-}}}2 */
 // vim: fdm=marker

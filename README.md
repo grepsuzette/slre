@@ -50,9 +50,9 @@ The languages definable with SLRE are therefore described using a [DAFSA](https:
 Notations: 
 
 - a-k : leaf nodes (these are `String`, not words or chars),
-- ⧇ : an `Alt` node . It is notated like this because it builds arrays (`[]`) which are then developed by the ⊙ operator. 
-- ⊙ : a `Seq`. A cartesian product operation coupled with a concatenation operation.
-- Opt nodes are not shown, because at some point `Opt(x)` is translated to `Alt(["", x]))`
+- ⧇ : an `Alt` node . It is notated like this because it builds alternation arrays (`[]`) which are then developed by the ⊙ operator. 
+- ⊙ : a `Seq`. A (pseudo-)cartesian product operation coupled with a concatenation operation. "Pseudo-" because if one set is empty or null for conveniency we want to return the other one.
+- `Opt` nodes are not shown, because at some point `Opt(x)` is translated to `Alt(["", x]))`
 
 Haxe definitionss:
 
@@ -65,7 +65,7 @@ enum Node {
 }
 ```
 
-**Pattern used** below: `{a{h{j|k}|l}c|de}f`. It's simple yet thourough enough.
+**Pattern used** below: `{a{h{j|k}|l}c|de}f`. It's simple yet thorough enough.
 
 ## AST (parsed tree internal representation)
 
@@ -96,7 +96,21 @@ Seq([
 
 ## Sequence of cartesian products
 
-To help visualizing the _expand() algorithm, and justify the need of `Seq` and `Alt`, notice we can represent **Pattern** `{a{h{j|k}|l}c|de}f` as:
+Let's begin with a simple example with pattern `a{d|e|f}{u|v}z`:
+
+It can be represented as:
+```
+                       
+         ⎡    d   ⎤   ⎡   u    ⎤         
+W =  a ⊙ ⎢    e   ⎥ ⊙ ⎢   v    ⎥  ⊙ z          
+         ⎣    f   ⎦   ⎣        ⎦
+```
+
+W develops in `["aduz", "advz", "aeuz", "aevz", "afuz", "afvz"] (6 possibilities because 1x3x2x1 = 6).
+
+Now let's move back to our pattern `{a{h{j|k}|l}c|de}f`.
+
+To help visualizing the `_expand()` algorithm, and justify the need of `Seq` and `Alt`, we can represent **Pattern** `{a{h{j|k}|l}c|de}f` as:
 
 ```
     ⎡                       ⎤
@@ -153,7 +167,7 @@ After putting this together we start to see the dance between ⊙ and ⧇ (Seq a
 ⧇ folds all (reduced) branches to a mere Array<String>.
   (note ⊙ DOES the String concat, NOT ⧇ ),
 ⊙ has an internal work var of Array<Array<String>>,
-  which then gets developed (using String concat variant of a cartesian product).
+  which then gets developed (using String concat variant of a pseudo-cartesian product).
   and returns Array<String>.
 ```
 
