@@ -335,7 +335,7 @@ enum NodeSeq { Seq(a:Array<Node>); }
 /* {{{2 
  
 DOC 
-To work with the parsed tree (as used by SLRE._expand() for instance).
+To work with the parsed tree (as used by SLRE._expand()).
 
    - ⧇ is an Alt node (note: an Opt is an Alt(["", ...]))
                       it is notated like this because it builds arrays (`[]`)

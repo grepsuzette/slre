@@ -7,4 +7,3 @@
 # or the compatible fork from legacy haxe.unit https://github.com/emugel/unit
 -lib unit
 # -lib hx3compat
--lib ansistral
