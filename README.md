@@ -99,17 +99,17 @@ Seq([
 To help visualizing the _expand() algorithm, and justify the need of `Seq` and `Alt`, notice we can represent **Pattern** `{a{h{j|k}|l}c|de}f` as:
 
 ```
-    |                       |
-    |      |         |      |         
-    |      | h ⊙ |j| |      |
-    |      |     |k| |      |
-    |  a ⊙ |         | ⊙ c  |           
-X = |      |         |      |  ⊙ f
-    |      |    l    |      |
-    |      |         |      |
-    |                       |
-    |     d     ⊙    e      |
-    |                       |
+    ⎢                       ⎤
+    ⎢       ⎡        ⎤      ⎤         
+    ⎢       ⎢ h ⊙ ⎡j⎤⎥      ⎤
+    ⎢       ⎢     ⎣k⎦⎥      ⎤
+    ⎢   a ⊙ ⎢        ⎥ ⊙ c  ⎤           
+X = ⎢       ⎢        ⎥      ⎤  ⊙ f
+    ⎢       ⎢    l   ⎥      ⎤
+    ⎢       ⎣        ⎦      ⎤
+    ⎢                       ⎤
+    ⎢      d     ⊙    e     ⎤
+    ⎣                       ⎦
 ```
 
 Between vertical bars are terms of an alternation, **vertically stacked**. 
