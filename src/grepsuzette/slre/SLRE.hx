@@ -1,9 +1,9 @@
 package grepsuzette.slre;
 
+import haxe.ds.Either;
 import grepsuzette.slre.Flags;
+import grepsuzette.slre.Quality;
 using StringTools;
-
-
 
 /**
  * Simple Linguistic Regular Expressions.
@@ -12,7 +12,7 @@ using StringTools;
  * expressive or at least more useful to enter simple and short linguistic
  * patterns than wildcard expressions. 
  *
- * Some examples:
+ * Examples:
  * 1. `dark|black|shadowed|sunless`: Implicit alternation, using `|`.
  * 2. `{dark|black} {chocolate|cocoa}`: Delimiting alternation, using `{}`. This means "black chocolate" or "dark cocoa" for instance are matches.
  * 3. `colo[u]r`, `a [very|quite|somewhat] hot summer`: Optional markup, using `[]`. 
@@ -61,14 +61,76 @@ class SLRE {
 
 
     /**
-     * Strict match, i.e. is Quality Perfect?
-     * @sa fuzzymatch()
+     * Strict match.
+     * This can be seriously optimized in that
+     * right now we just _expand() the parse tree
+     * to all matching strings (modulo the letter's case of course).
+     * @sa match_q()
      */
     public function match(s:String) : Bool {
-        return false;   // TODO
+        var search = this.flags.caseSensitive
+            ? s
+            : s.toLowerCase()
+        ;
+        for (developed in _expand()) {
+            if (this.flags.caseSensitive) {
+                if (developed == search) return true;
+            }
+            else if (developed.toLowerCase() == search)
+                return true;
+        }
+        return false;
     }
 
-    // public function fuzzymatch(s:String) : Quality {}
+    /**
+     * Return qualitative best match.
+     * @param (filter:S->S) an optional filter for expanded 
+     *  expected values. If given, s is evaluated against 
+     *  both filtered and unfiltered expansions.
+     * @return (Quality) in all cases we return the best 
+     *         Quality possible.
+     */
+    public function match_q( s:String, ?filter:(developed:String, search:String, slre:SLRE)->Either<Quality, QualityError>) : Either<Quality, QualityError> {
+        if (s == "") return Left(Empty);
+        var search = s;
+        var best : Quality = Bad;
+        if (filter != null) {
+            // filtered doesn't get levenshtein distance evaluation automatically
+            for (developed in _expand()) {
+                if (developed == search) return Left(Perfect);
+                else {
+                    switch filter(developed, search, this) {
+                        case Left(q):
+                            if (q == Perfect) return Left(Perfect);
+                            if (q > best) best = q;
+                        case Right(qerror):
+                            return Right(qerror);
+                    }
+                }
+            }
+            return Left(best);
+        }
+        else {
+            // no filter
+            if (!this.flags.caseSensitive) {
+                search = search.toLowerCase();
+            }
+            var bestLevenshtein : Int = 99;
+            for (developed in _expand()) {
+                if (!this.flags.caseSensitive) {
+                    developed = developed.toLowerCase();
+                }
+                if (developed == search) return Left(Perfect);
+                else {
+                    var lev = Tools.getLevenshteinDistance(developed, search);
+                    if (lev < bestLevenshtein) bestLevenshtein = lev;
+                }
+            }
+            // unfound
+            if (bestLevenshtein <= 2) return Left(Average);
+            else return Left(Bad);
+        }
+    }
 
     /**
      * Expand SLRE to all possible strings (modulo case-insensitivity and utf-8
@@ -279,7 +341,7 @@ class SLRE {
     //     ;
 
     /**
-     * A n-ary pseudo-cartesian-product (pseudo because 
+     * A n-ary pseudo-cartesian-product (pseudo:
      * when one set is empty we return the other one instead of ⊘).
      * [["a b c"], ["d"], ["e f"]] 
      * -> [ ["a d e"], ["a d f"], ["b d e"], ["b d f"], ["c d e"], ["c d f"] ]
@@ -323,14 +385,14 @@ class SLRE {
 }
 
 /**
- * These are quite internal.
+ * Enums for AST parse tree.
  */
+enum NodeSeq { Seq(a:Array<Node>); }
 enum Node {
     Text(s:String);             // Leaf
     Alt (a:Array<NodeSeq>);     // Alternatives
     Opt (a:Array<NodeSeq>);     // Opt([...]) <=> Alt(["", ...])
 }
 
-enum NodeSeq { Seq(a:Array<Node>); }
 
 // vim: fdm=marker

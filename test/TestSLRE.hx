@@ -1,6 +1,7 @@
 package test;
 
 import grepsuzette.slre.SLRE;
+import grepsuzette.slre.Tools.stripAccents as stripAccents;
 using test.TestSLRE;            // for the 2 last methods
 
 // @:access(grepsuzette.slre.SLRE._specialTrim)
@@ -12,6 +13,8 @@ class TestSLRE extends haxe.unit.TestCase {
         runner.run();
     }
 
+
+
     public static function parse(patt:String) 
         return SLRE.create(patt)._parse();
     
@@ -19,6 +22,11 @@ class TestSLRE extends haxe.unit.TestCase {
     public static function expand(patt:String) 
         return SLRE.create(patt)._expand();
     
+
+    public function test_stripAccents() : Void {
+        assertEquals(stripAccents("läéñÿ"), "laeny");
+        assertEquals(stripAccents("MÖtörhēād"), "MOtorhead");
+    }
 
     // public function test_specialTrim() : Void {
     //     assertEquals(SLRE._specialTrim("Hi"), "Hi");
