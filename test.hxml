@@ -6,4 +6,5 @@
 # requires either hx3compat
 # or the compatible fork from legacy haxe.unit https://github.com/emugel/unit
 -lib unit
+-lib iso639-1
 # -lib hx3compat

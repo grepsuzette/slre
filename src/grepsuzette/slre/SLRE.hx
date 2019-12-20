@@ -47,8 +47,11 @@ class SLRE {
      * @param (maxdepth) <= 0 here will automatically use the DEFAULTMAXDEPTH value.
      */
     public function new(pattern:String, flags:String="", maxdepth=0) {
-        this.pattern  = pattern;
         this.flags    = new Flags(flags);
+        this.pattern  = this.flags.unicodeEquiv
+            ? Tools.stripAccents(pattern)
+            : pattern
+        ;
         this.maxdepth = maxdepth <= 0 ? DEFAULTMAXDEPTH : maxdepth;
     }
 
@@ -68,6 +71,7 @@ class SLRE {
      * @sa match_q()
      */
     public function match(s:String) : Bool {
+        if (this.flags.unicodeEquiv) s = Tools.stripAccents(s);
         var search = this.flags.caseSensitive
             ? s
             : s.toLowerCase()
@@ -92,6 +96,7 @@ class SLRE {
      */
     public function match_q( s:String, ?filter:(developed:String, search:String, slre:SLRE)->Either<Quality, QualityError>) : Either<Quality, QualityError> {
         if (s == "") return Left(Empty);
+        if (this.flags.unicodeEquiv) s = Tools.stripAccents(s);
         var search = s;
         var best : Quality = Bad;
         if (filter != null) {
@@ -131,6 +136,18 @@ class SLRE {
             else return Left(Bad);
         }
     }
+
+    /**
+     * Return one of the possible expansions, randomly.
+     * E.g. "[blue|jazzy] note" would return either "blue note" or "jazzy note".
+     * @param (Bool enableLock) Force returning the same as previous.
+     */
+    public function random(enableLock:Bool=false) : String {
+        if (enableLock && _sPrevRandom != null && _sPrevRandom != "") return _sPrevRandom;
+        var a = this._expand();
+        return _sPrevRandom = a[Std.random(a.length)];
+    }
+    var _sPrevRandom : String;
 
     /**
      * Expand SLRE to all possible strings (modulo case-insensitivity and utf-8

@@ -1,6 +1,7 @@
 package grepsuzette.slre;
 
 import Iso639_1 as Lg;
+using StringTools;
 
 class Tools {
 
@@ -26,6 +27,10 @@ class Tools {
      * @return (String) "läéñÿ" -> "laeny"
      */
     public static function stripAccents(s:String /*, lg:Lg=null */):String{
+        if (s == null || s == "") return "";
+        var bCharOver127 = false;
+        for (i in 0...s.length) if (s.fastCodeAt(i) > 127) bCharOver127 = true;
+        if (!bCharOver127) return s;
         #if !target.unicode
             #if (sys)
                 // TODO check if we are on linux or iconv (or uconv) exists
@@ -41,7 +46,6 @@ class Tools {
             #end
         #else
         // TODO Warning, this is untested yet
-        if (s == null) return "";
         var buf = new StringBuf();
         // for (ch in new haxe.iterators.StringIteratorUnicode(s)) { // 0...s.length) {
         for (i in 0...s.length) {
@@ -56,7 +60,7 @@ class Tools {
                 // https://en.wikipedia.org/wiki/Diacritic#Other_languages
 
                 // grave  circ  acute caron macron diae tild
-                case "á" | "â" | "à" | "ǎ" | "ā" | "ä"  | "ã": trace("aa"); "a";
+                case "á" | "â" | "à" | "ǎ" | "ā" | "ä"  | "ã": "a";
                 case "é" | "ê" | "è" | "ě" | "ē" | "ë"       : "e";
                 case "í" | "î" | "ì" | "ǐ" | "ī" | "ï"       : "i";
                 case "ó" | "ô" | "ò" | "ǒ" | "ō" | "ö"  | "õ": "o";

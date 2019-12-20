@@ -4,7 +4,7 @@
   "license": "mit",
   "tags": ["regular expression", "regular expressions", "regex", "linguistic", "human", "expression"],
   "description": "*-less, unrecursive, simple & safe regular expressions for linguistics, usable by non-regex savvy users. SLRE are such as `{We are|I am} [very|quite] glad to {write|offer} {simple [regular ]expressions|SLRE}[ at last].`",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "releasenote": "initial release (gamma). tests pass but still lacks match() (you would use _expand() for the time being)",
   "contributors": ["emugel"],
   "dependencies": { 

@@ -13,8 +13,6 @@ class TestSLRE extends haxe.unit.TestCase {
         runner.run();
     }
 
-
-
     public static function parse(patt:String) 
         return SLRE.create(patt)._parse();
     
@@ -26,6 +24,34 @@ class TestSLRE extends haxe.unit.TestCase {
     public function test_stripAccents() : Void {
         assertEquals(stripAccents("läéñÿ"), "laeny");
         assertEquals(stripAccents("MÖtörhēād"), "MOtorhead");
+    }
+
+
+    public function test_random() : Void {
+        var slre = new SLRE("{blue|jazzy} note");
+        var r = 100;
+        for (i in 0...100) {
+            switch slre.random() {
+                case "blue note": r++;
+                case "jazzy note": r--;
+                case xxx: trace(xxx); assertFalse(true);
+            }
+        }
+        assertTrue(r > 10);
+        assertTrue(r < 190);
+    }
+
+    public function test_random2() : Void {
+        var slre = new SLRE("{blue|jazzy} note");
+        var r = 100;
+        for (i in 0...100) {
+            switch slre.random(true) { // always the same
+                case "blue note": r++;
+                case "jazzy note": r--;
+                case xxx: trace(xxx); assertFalse(true);
+            }
+        }
+        assertTrue(r > 190 || r < 10);
     }
 
     // public function test_specialTrim() : Void {
@@ -296,5 +322,6 @@ class TestSLRE extends haxe.unit.TestCase {
     public static function fsort_string(s1:String, s2:String) : Int {
         return s1 < s2 ? -1 : s1 > s2 ? 1 : 0;
     }
+
 
 }
