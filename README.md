@@ -13,23 +13,23 @@ Simple Linguistic Regular Expressions (SLRE) come naturally and we give it a for
 * to be understandable, **readable** and **writable**, by **regular**, non-computer savvy **users**,
 * to be usable on a web server while being [ReDos-safe](https://en.wikipedia.org/wiki/Regular_expression_Denial_of_Service),
 * focus on **linguistic** rather than general expression,  
-* have some **fuzzy** rather than **boolean** matching, 
-* remove regex features such as the Kleene-star, concentrate on fuzzy matching to verify how well an answer matches an expected pattern, including the option for some utf-8 characters to automatically match another (e.g. "e" fuzzily matching "é") **hence "Simple Linguistic" in SLRE**.
+* (still working on that) have some **quality** (`match_q()`) match in addition to a regular **boolean** `match()`, 
+* absence of Kleene-star and such counting features.
+
+The purpose is to concentrate on fuzzy matching to verify how well an answer matches an expected pattern, including the option for some utf-8 characters to automatically match another (e.g. "e"  matching "é"), hence the "Simple Linguistic" in SLRE.
 
 ## Examples
 
-How easy it is?
-
 It only uses 5 glyphs: `|`, `{`, `}`, `[`, `]` (six with upcoming escape character `\`).
 
-A few examples showing **all there is to know**.
+A few examples showing all there is to know.
 
 1. `dark|black|shadowed|sunless`: either word is acceptable. But it won't match if anything precedes or follows.
 2. `{dark|black} {chocolate|cocoa}`: there are four acceptable answers: "dark chocolate", "black chocolate", "dark cocoa", "black cocoa". 
 3. `colo[u]r`: this shows optional alternative, here "color" and "colour" are the only matches.
-4. `a [very|quite|somewhat] hot summer`: this time we really have alternatives, and they can be omitted. There are 4 acceptable matches here, including "a hot summer" (which would have given no match if curly brackets had been used).
+4. `a [very |quite |somewhat ]hot summer`: this time we really have alternatives, and they can be omitted. There are 4 acceptable matches here, including "a hot summer" (which would have given no match if curly brackets had been used).
 5. `some part[ completely {optional|up to you}] that you will write yourself`: Nesting is possible.
-6. `[Yesterday |Monday ]{[s]he|it} {negligently} drove a {[Mercedes[-| ] ]Benz|Ferrari|Porsche}`: it's possible to write more cumbersome expressions, though it somehow defeats the purpose of SLRE (they are for short expressions, if you expect a match being a very long sentence you probably won't want to use SLRE nor regex).
+6. `[Yesterday |Monday ]{[s]he|it} {negligently} drove a {[Mercedes[-| ] ]Benz|Ferrari|Porsche}`: showing it's possible to write more cumbersome expressions, but it somehow defeats the purpose of SLRE (they are for short expressions).
 
 # In the Chomsky hierarchy
 
