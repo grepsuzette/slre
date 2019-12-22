@@ -11,7 +11,7 @@ package grepsuzette.slre;
  */
 class Flags {
     public var unicodeEquiv     (default, null): Bool;
-    public var caseSensitive (default, null): Bool;
+    public var caseSensitive    (default, null): Bool;
 
     @:throw public function new(flags:String="") {
         caseSensitive = false;

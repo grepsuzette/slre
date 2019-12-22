@@ -150,6 +150,15 @@ class SLRE {
     var _sPrevRandom : String;
 
     /**
+     * Return first result of expansion, or throw.
+     */
+    public function first() : String {
+        var a = this._expand();
+        if (a.length >= 1) return a[0];
+        else throw "no expansion";
+    }
+
+    /**
      * Expand SLRE to all possible strings (modulo case-insensitivity and utf-8
      * equivalence characters).
      *

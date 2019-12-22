@@ -13,14 +13,9 @@ class TestSLRE extends haxe.unit.TestCase {
         runner.run();
     }
 
-    public static function parse(patt:String) 
-        return SLRE.create(patt)._parse();
+    public static function parse(patt:String) return SLRE.create(patt)._parse();
+    public static function expand(patt:String) return SLRE.create(patt)._expand();
     
-
-    public static function expand(patt:String) 
-        return SLRE.create(patt)._expand();
-    
-
     public function test_stripAccents() : Void {
         assertEquals(stripAccents("läéñÿ"), "laeny");
         assertEquals(stripAccents("MÖtörhēād"), "MOtorhead");
@@ -311,6 +306,16 @@ class TestSLRE extends haxe.unit.TestCase {
         assertEquals(
             expand("[Yesterday|Monday]|Today").join("＆"),
             [ "", "Yesterday", "Monday", "Today" ].join("＆")
+        );
+    }
+
+    public function test_expand_hanzi() : Void {
+        assertEquals("你" + "好", "你好");
+        var slre = new SLRE("一{二|三}四", "U");    // bug right now w/ neko and unicode,
+                                                    // but if we use U test should pass
+        assertEquals(
+            slre._expand().join("＆"),
+            [ "一二四", "一三四" ].join("＆")
         );
     }
 
