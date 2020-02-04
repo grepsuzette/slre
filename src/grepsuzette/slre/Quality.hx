@@ -7,6 +7,7 @@ import haxe.ds.Either;
 enum QualityError {
     PleaseInNCharacters(n:Int);     // e.g. when answering with 1 character instead 
     PleaseInNWords(n:Int);          // e.g. when answering with 1 character instead 
+    Custom(s:String);
 }
 
 /**

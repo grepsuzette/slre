@@ -10,11 +10,11 @@ Simple Linguistic Regular Expressions (SLRE) come naturally and we give it a for
 
 **Aims** can be defined by the needs:
 
-* to be understandable, **readable** and **writable**, by **regular**, non-computer savvy **users**,
+* to be understandable, **readable** and **writable**, by **regular users**,
 * to be usable on a web server while being [ReDos-safe](https://en.wikipedia.org/wiki/Regular_expression_Denial_of_Service),
 * focus on **linguistic** rather than general expression,  
 * (still working on that) have some **quality** (`match_q()`) match in addition to a regular **boolean** `match()`, 
-* absence of Kleene-star and such counting features.
+* elimination of a Kleene-star.
 
 The purpose is to concentrate on fuzzy matching to verify how well an answer matches an expected pattern, including the option for some utf-8 characters to automatically match another (e.g. "e"  matching "é"), hence the "Simple Linguistic" in SLRE.
 

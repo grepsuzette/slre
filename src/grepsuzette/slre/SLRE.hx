@@ -1,6 +1,7 @@
 package grepsuzette.slre;
 
 import haxe.ds.Either;
+import haxe.ds.Option;
 import grepsuzette.slre.Flags;
 import grepsuzette.slre.Quality;
 using StringTools;
@@ -138,6 +139,19 @@ class SLRE {
     }
 
     /**
+     * Check whether a SLRE, in String form, is valid.
+     * Example of an invalid one is "[a [blue]] car".
+     * @param (String) SLRE as a String
+     * @return (Option<String>). None when no error, or Some(string).
+     */
+    public static function validate(slrePatt:String) : Option<String> {
+        var slre = new SLRE(slrePatt);
+        try slre._expand()
+        catch (d:Dynamic) return Some("Following seems malformed: " + slrePatt);
+        return None;
+    }
+
+    /**
      * Return one of the possible expansions, randomly.
      * E.g. "[blue|jazzy] note" would return either "blue note" or "jazzy note".
      * @param (Bool enableLock) Force returning the same as previous.
@@ -172,7 +186,7 @@ class SLRE {
      *              "here is what is to be typed"
      *          ]
      *
-     * @note you ideally won't need to call this but rather match().
+     * @note you ideally won't need to call this but rather match() or isValid().
      * @throw (String) when internally called parse() would throw.
      * @sa match()
      */
@@ -217,25 +231,29 @@ class SLRE {
 
     /**
      * You shouldn't need to call it.
+     * It parses the expression to an AST (NodeSeq),
+     * and throws if there are any errors.
      */
     @:throw public function _parse() : NodeSeq {
-        // we will use the original parseWithImplicitAlt() and transform it slightly.
+        // we will use the original _parseWithImplicitAlt() and transform it
+        // slightly.
         if (this._ast != null) return _ast;
-        var devnode : Node = _parseWithImplicitAlt();
-        switch devnode {
+        var developed_node : Node = _parseWithImplicitAlt();
+        switch developed_node {
             case Alt(aseq):
                 if (aseq.length == 0) return this._ast = Seq([]);
                 if (aseq.length == 1) return this._ast = aseq[0];
-                else return this._ast = Seq([ devnode ]);
-            case _: throw 'Alt expected instead of ${Std.string(devnode)}';
+                else return this._ast = Seq([ developed_node ]);
+            case _: throw 'Alt expected instead of ${Std.string(developed_node)}';
         }
     }
 
     /**
      * As they are tokens separated by any amount of space or tab chars,
-     *   String inside Text(...) are trimmed, with the exception when it
+     *   Strings inside Text(...) are trim()-med, with an exception when it
      *   matches ~/^[ \t]+$/ where an actual Text(" ") 
-     *   is used (e.g. in "every[ ]one").
+     *   is used (e.g. in "every[ ]one", because otherwise that would give a 
+     *   Text(""), defeating the purpose...).
      */
     @:throw public function _parseWithImplicitAlt() : Node {
         var expected = this.pattern;

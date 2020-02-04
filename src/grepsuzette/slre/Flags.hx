@@ -15,7 +15,7 @@ class Flags {
 
     @:throw public function new(flags:String="") {
         caseSensitive = false;
-        unicodeEquiv     = true;
+        unicodeEquiv  = true;
         //
         for (i in 0...flags.length) {
             switch flags.charAt(i) {
@@ -28,5 +28,4 @@ class Flags {
         }
     }
 }
-
 

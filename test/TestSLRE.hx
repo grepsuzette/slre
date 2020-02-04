@@ -104,6 +104,9 @@ class TestSLRE extends haxe.unit.TestCase {
         try switch parse("{{mismatch|unbalanced}|tudor|{unbalanced}") {
             case _: assertTrue(false);
         } catch (d:Dynamic) assertTrue(true);
+        try switch parse("support[ing]}") {
+            case _: assertTrue(false);
+        } catch (d:Dynamic) assertTrue(true);
     }
 
     public function test_parse_1() : Void {

@@ -19,7 +19,7 @@ class Tools {
      * would be nice because, haha. it's a real pita.
      * https://en.wikipedia.org/wiki/Unicode_equivalence
      *
-     * @param (String)
+     * @param (String) The string to strip accents from
      * @param (Iso639_1 lg) [Maybe] if a language is provided,
      *                      only diacritic for this language
      *                      may be removed, allowing
